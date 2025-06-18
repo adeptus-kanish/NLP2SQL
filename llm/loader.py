@@ -1,4 +1,6 @@
 from llama_cpp import Llama
+from utils.prompt_builder import build_prompt
+import re
 
 class LocalLLM:
     def __init__(self, model_path="llm/model/mistral-7b-instruct-v0.3-q4_k_m.gguf"):
@@ -11,15 +13,22 @@ class LocalLLM:
             use_mmap=True
         )
 
-    def generate(self, prompt, max_tokens=200):
+    def clean_sql(self, raw_output):
+        match = re.search(r"(?i)(select|insert|update|delete).*?;", raw_output, re.DOTALL)
+        return match.group(0).strip() if match else raw_output.strip()
+
+
+    def generate_sql(self, user_question, max_tokens=200):
+        prompt = build_prompt(user_question)
         output = self.model(
             prompt,
             max_tokens=max_tokens,
-            stop=["<|end|>", "</s>"],
+            stop=["SQL:", "\n\n", "<|end|>", "</s>"],
             echo=False,
-            temperature=0.7,
+            temperature=0.3,
         )
-        return output['choices'][0]['text'].strip()
+        sql_text = output['choices'][0]['text'].strip()
+        return self.clean_sql(sql_text)
 
 
 # import os
