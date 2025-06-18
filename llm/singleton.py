@@ -1,11 +1,9 @@
-# from llm.loader import LLMQueryEngine
-from llm.loader import LocalLLM
+from llm.loader import LLMQueryEngine
 
 _instance = None
 
 def get_llm_instance():
     global _instance
     if _instance is None:
-        # _instance = LLMQueryEngine()
-        _instance = LocalLLM()
+        _instance = LLMQueryEngine()
     return _instance
