@@ -1,0 +1,10 @@
+{
+  "table": "employee",
+  "columns": [
+    {"name": "id", "type": "INTEGER"},
+    {"name": "name", "type": "TEXT"},
+    {"name": "department", "type": "TEXT"},
+    {"name": "salary", "type": "INTEGER"},
+    {"name": "join_date", "type": "DATE"}
+  ]
+}
