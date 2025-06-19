@@ -1,0 +1,20 @@
+llm:
+  model_path: "llm/model/mistral-7b-instruct-v0.3-q4_k_m.gguf"
+  n_ctx: 1024  # context window size
+  n_gpu_layers: -1  # no. of transformer layers to offload to GPU
+  n_threads: 6  # cpu threads to use
+  n_batch: 64  # tokens to process
+  use_mlock: True  # locks model in RAM to avoid swapping
+  use_mmap: True  # uses memory-mapped file loading
+  verbose: False  # True to log every token
+
+
+schema:
+  employee:
+    file_path: "schema/employee_schema.json"
+
+
+vector_store:
+  enabled: False
+  type: "chroma"
+  path: "chroma_store/emplotyee_index"
