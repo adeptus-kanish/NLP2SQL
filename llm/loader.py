@@ -4,8 +4,12 @@ import re
 import os
 import sys
 import contextlib
+import yaml
 
-MODEL_PATH = "llm/model/mistral-7b-instruct-v0.3-q4_k_m.gguf"
+with open('config.yaml', 'r') as f:
+    config = yaml.safe_load(f)
+
+MODEL_PATH = config["llm"]["model_path"]
 
 # suppress verbose for Metal backend logs (llama.cpp backend)
 @contextlib.contextmanager
@@ -23,13 +27,13 @@ class LLMQueryEngine:
         with suppress_stderr():
             self.model = Llama(
                 model_path=model_path,
-                n_ctx=1024,
-                n_gpu_layers=-1,  # Use GPU (M2 Metal) if running out of VRAM use 20
-                n_threads=6,
-                n_batch=64,
-                use_mlock=True,
-                use_mmap=True,
-                verbose=False   # Use True for debugging
+                n_ctx=config["llm"]["n_ctx"],
+                n_gpu_layers=config["llm"]["n_gpu_layers"],  # Use GPU (M2 Metal) if running out of VRAM use 20
+                n_threads=config["llm"]["n_threads"],
+                n_batch=config["llm"]["n_batch"],
+                use_mlock=config["llm"]["use_mlock"],
+                use_mmap=config["llm"]["use_mmap"],
+                verbose=config["llm"]["verbose"]   # Use True for debugging
             )
 
     def clean_sql(self, raw_output):
