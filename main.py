@@ -15,7 +15,7 @@ prompt = f"""You are a SQL expert. Convert the following natural language questi
              SQL:"""
 
 # 3. Generate SQL output from LLM
-sql_query = llm.generate(prompt)
+sql_query = llm.generate_sql(prompt)
 
 print("\n🧠 Input:", user_input)
 print("\nGenerated SQL:\n", sql_query)
