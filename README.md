@@ -82,40 +82,52 @@ Welcome to the NLP2SQL CLI. Type 'exit' to quit.
 
 ---
 
-## 🛠️ Phase 1 Features
+## 📌 Real Use Case Examples
 
-- Local inference using `mistral-7b-instruct`
-    
-- Prompt templates for SQL generation
-    
-- CLI-based interaction loop
-    
-- Basic prompt-to-LLM wrapper
-    
-- Employee CSV + JSON schema for grounding
-    
+| User Query                                       | Action Type           |
+| ------------------------------------------------ | --------------------- |
+| “List all employees who joined before 2015”      | → SQL                 |
+| “What is the meaning of join\_date?”             | → Vector search (RAG) |
+| “Which columns are there in this dataset?”       | → Vector search (RAG) |
+| “How many people joined in HR after 2010?”       | → SQL                 |
+| “What’s the definition of bonus in this schema?” | → RAG                 |
 
 ---
 
-## ✅ Next Phases (Planned)
+## Phase 1
 
-- Phase 2: Integrate SQL execution
-    
-- Phase 3: ChromaDB-backed RAG
-    
-- Phase 4: Agent Orchestration (LLM + tools)
-    
-- Phase 5: REST API or UI for usage
-    
+| Area                    | Status                          | Notes                                              |
+| ----------------------- | ------------------------------- | -------------------------------------------------- |
+| **Model Directory**     | ✅ `llm/model/`                  | `mistral-7b-instruct-v0.3-q4_k_m.gguf` is in place |
+| **Local Loading Logic** | ✅ `loader.py` + `singleton.py`  | Loads the GGUF model via llama.cpp (with Metal)    |
+| **Prompt Execution**    | ✅ Works end-to-end              | Generates SQL or freeform answers                  |
+| **Data**                | ✅ `data/simple_employee.csv`    | Enough for mock evaluation                         |
+| **Schema**              | ✅ `schema/employee_schema.json` | Good for later RAG (Phase 2)                       |
+| **Utilities**           | ✅ `utils/chroma_utils.py`       | Placeholder for Chroma DB ops                      |
+| **Virtual Env**         | ✅ `ragenv/`                     | Fully isolated environment                         |
 
 ---
 
-## ⚠️ Known Issues
+## Phase 2
 
-- Metal backend prints "not supported" warnings — safe to ignore on M1/M2 Macs.
-    
-- Prompt formatting errors may result in malformed SQL — check `PROMPT_TEMPLATE`.
-    
+| Task                           | File                           | Description                                                                                |
+| ------------------------------ | ------------------------------ | ------------------------------------------------------------------------------------------ |
+| **1. Add SQLite DB**           | `data/employees.db` or similar | Create and populate a small SQLite database with dummy employee data (if not already done) |
+| **2. Create SQL executor**     | `executor.py`                  | A module to execute SQL queries safely and return results or error messages                |
+| **3. Connect executor to CLI** | `cli_chat.py`                  | After LLM outputs SQL, run it and show results                                             |
+| **4. Handle exceptions**       | `executor.py` + `cli_chat.py`  | Show friendly error messages if SQL is invalid                                             |
+| **5. Improve UX**              | `cli_chat.py`                  | Add a loop to ask for more queries until user exits                                        |
+
+---
+
+## Phase 3
+
+| Step | Task                                             | Description                                       |
+| ---- | ------------------------------------------------ | ------------------------------------------------- |
+| 1    | Setup & store schema/query knowledge in ChromaDB | Index schema + sample queries                     |
+| 2    | Add semantic retriever (`chroma_utils.py`)       | Flexible chunk search based on user query         |
+| 3    | Decide route: LLM SQL vs RAG                     | Add router logic to use LLM or fallback to Chroma |
+| 4    | Print clean result in CLI                        | RAG fallback answer if no SQL                     |
 
 ---
 
